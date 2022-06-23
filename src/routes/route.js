@@ -2,21 +2,31 @@ const express = require('express');
 const router = express.Router();
 const authorController =require("../controller/authorController")
 const blogController =require("../controller/blogController")
+const mw =require("../middleware/middlewareController")
+
+
 
 
 // Api to Create Author
 router.post("/authors",authorController.createAuthors)
 
 //Api to Create Blogs
-router.post("/blogs",blogController.createBlogs)
+router.post("/blogs",mw.authentication,mw.authorization,blogController.createBlogs)
 
-router.get("/blogs",blogController.getBlogs)
+//Api to get Blogs
+router.get("/blogs",mw.authentication,blogController.getBlogs)
 
-router.put("/blogs/:blogId",blogController.updateBlogs)
+//Api to update blog as per blogId
+router.put("/blogs/:blogId",mw.authentication,mw.authorization,blogController.updateBlogs)
 
-router.delete("/blogs/:blogId",blogController.deletedBlog)
+//Api to delete blog
+router.delete("/blogs/:blogId",mw.authentication,mw.authorization,blogController.deletedBlog)
 
-router.delete("/blogs",blogController.deleteBlogWithQuery)
+//Api to delete the blog as per query
+router.delete("/blogs",mw.authentication,mw.authorization,blogController.deleteBlogWithQuery)
+
+
+router.post("/login",authorController.authorLogin)
 
 
 

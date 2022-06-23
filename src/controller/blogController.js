@@ -66,7 +66,7 @@ exports.createBlogs = async function (req, res) {
 exports.getBlogs = async function (req, res) {
     try {
         let { tags, category, subcategory, authorId, ...rest } = req.query;
-        if (rest) {
+        if (rest.length >= 0) {
             return res.status(400).send({ status: false, msg: "BAD REQUEST" })
         }
         //check if any quer parm is present ?
@@ -191,45 +191,50 @@ exports.deletedBlog = async function (req, res) {
 
 exports.deleteBlogWithQuery = async function (req, res) {
     try {
+
         let { tags, category, subcategory, authorId, isPublished, ...rest } = req.query;
-       
+
         //check if unwanted query is passed
-        if (rest.length>=0) {
+        if (rest.length >= 0) {
             return res.status(400).send({ status: false, msg: "BAD REQUEST" })
         }
 
         //check the author Id is Valid or Not ?
+        if(authorId in req.query){
         if (!ObjectId.isValid(authorId)) {
             return res.status(400).send({ status: false, msg: "Id is Invalid" });
+        }}
+
+        req.query.isDeleted=false
+        // return me the list of object, having author id which is given and isDeleated False
+        let blog = await blogModel.find(req.query)
+            .select("isDeleted");
+        console.log(blog)
+
+        //check if blog is availble as per provided author ID
+        if (blog.length == 0) {
+            return res.status(404).send({ status: false, msg: "no Blog is Available as per this filter query data" });
         }
 
-        let blog = await blogModel.find({authorId:authorId});
-        //console.log(blog)
+        // x will contain all the blogid's having isDeleated :False related to passed author id
+        let isDeletedFalseId = blog.map((data) => data._id.toString())
 
 
-        // let x =blog.map((data)=>{
-        //     if(!data.isDeleted){
-        //         return data._id.toString()
-        //     }
-        //     return false
-        // })
 
-        // console.log("x",x)
+        let updatedData = [];  // vatiable for storing the updated data
 
-        if(blog.length==0){
-            return res.status(404).send({ status: false, msg: "No such user exists" });
+        //loop for updating the data based on blog id
+        for (id of isDeletedFalseId) {
+            let x = await blogModel.findOneAndUpdate({ _id: id },
+                { isDeleted: true, deletedAt: new Date() }, { new: true });
+            updatedData.push(x)
         }
-    
-        // //check if isDeleated Status is True
-        // if (blog.isDeleted) {
-        //     return res.status(404).send({ status: false, msg: "Blog is already Deleted" })
-        // }
 
         //update the status of isDeleted to TRUE
-        let updatedData = await blogModel.updateMany(req.query, { isDeleted: true,deletedAt: new Date() }, { new: true });
+        //let updatedData = await blogModel.updateMany(req.query, { isDeleted: true, deletedAt: new Date() }, { new: true });
+
+
         return res.status(200).send({ status: true, data: updatedData });
-
-
 
     } catch (error) {
         return res.status(500).send({ status: false, msg: error.message })
