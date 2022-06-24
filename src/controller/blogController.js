@@ -60,7 +60,6 @@ exports.createBlogs = async function (req, res) {
     } catch (error) {
         return res.status(500).send({ status: false, msg: error.message })
     }
-
 }
 
 exports.getBlogs = async function (req, res) {

@@ -65,7 +65,7 @@ exports.authorization = async function (req, res, next) {
             return res.status(400).send({status:false,mg:" Author id Must be Present ......."})
         }
     } catch (err) {
-        return res.ststus(500).send({ status: false, msg: err.message })
+        return res.status(500).send({ status: false, msg: err.message })
     }
    
 };
