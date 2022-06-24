@@ -2,38 +2,38 @@ const jwt = require("jsonwebtoken");
 const blogModel = require("../models/blogModel");
 //authentication
 
-exports.authentication = function (req, res, next) {
-    try {//check the token in request header
+exports.authentication = async function (req, res, next) {
+    try {
+        //check the token in request header
         //validate this token
-        let token = req.headers["x-Auth-token"];
+        let token = req.headers["X-Auth-Token"];
         if (!token) token = req.headers["x-auth-token"];
-        let decodedToken;
-        //If no token is present in the request header ,return error
-        if (!token) return res.send({ status: false, msg: "token must be present" });
+        
 
-        try {
-            decodedToken = jwt.verify(token, "MSgroup-3");
-        }
-        catch (err) {
+        //If no token is present in the request header ,return error
+        if (!token) return res.status(400).send({ status: false, msg: "token must be present" });
+
+        //it verify the token
+        let decodedToken = await jwt.verify(token, "MSgroup-3");
+        if(!decodedToken){
             return res.status(400).send({ status: false, msg: "Please enter valid token in header body" })
         }
-        console.log(token)
-        next()
+       
+        next() 
     } catch (err) {
-        return res.ststus(500).send({ status: false, msg: err.message })
+        return res.status(500).send({ status: false, msg: err.message })
     }
 };
 
 
 exports.authorization = async function (req, res, next) {
     try {
-        let token = req.headers["x-Auth-token"];
+        let token = req.headers["X-Auth-Token"];
         if (!token) token = req.headers["x-auth-token"];
 
-        try {
-            decodedToken = jwt.verify(token, "MSgroup-3");
-        }
-        catch (err) {
+        //it verify the token
+        let decodedToken = await jwt.verify(token, "MSgroup-3");
+        if(!decodedToken){
             return res.status(400).send({ status: false, msg: "Please enter valid token in header body" })
         }
 
@@ -55,12 +55,15 @@ exports.authorization = async function (req, res, next) {
             next()
         }
 
+        //executes when we need authorID from query params, (when UPDATE with Query Param filter)
         if(req.query.authorId){
             if (decodedToken.authorId != (req.query.authorId)) {
                 return res.status(404).send({ status: false, msg: "token auth id and req.body id is not matched" })
             }
             next()
         }
+
+        //if no Author Id is Found from client Api ,Side
         else{
             return res.status(400).send({status:false,mg:" Author id Must be Present ......."})
         }
