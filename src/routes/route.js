@@ -25,7 +25,7 @@ router.delete("/blogs/:blogId",mw.authentication,mw.authorization,blogController
 //Api to delete the blog as per query
 router.delete("/blogs",mw.authentication,mw.authorization,blogController.deleteBlogWithQuery)
 
-
+// api for author login
 router.post("/login",authorController.authorLogin)
 
 
