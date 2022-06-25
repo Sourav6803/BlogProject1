@@ -5,8 +5,6 @@ const blogController =require("../controller/blogController")
 const mw =require("../middleware/middlewareController")
 
 
-
-
 // Api to Create Author.
 router.post("/authors",authorController.createAuthors) // testing done
 
@@ -20,10 +18,10 @@ router.get("/blogs",mw.authentication,blogController.getBlogs) //testing done
 router.put("/blogs/:blogId",mw.authentication,mw.authorization,blogController.updateBlogs) //testing done
 
 //Api to delete blog.
-router.delete("/blogs/:blogId",mw.authentication,mw.authorization,blogController.deletedBlog)
+router.delete("/blogs/:blogId",mw.authentication,mw.authorization,blogController.deletedBlog) //testing done
 
 //Api to delete the blog as per query.
-router.delete("/blogs",mw.authentication,mw.authorization,blogController.deleteBlogWithQuery)
+router.delete("/blogs",mw.authentication,mw.authorization,blogController.deleteBlogWithQuery) //testing done
 
 // Api For author login.
 router.post("/login",authorController.authorLogin) //testing done

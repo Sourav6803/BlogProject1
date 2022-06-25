@@ -18,7 +18,6 @@ exports.createAuthors = async function (req, res) {
             return res.status(400).send({ status: false, msg: "Missing Name" });
         }
 
-
         // check fname and lname is valid name or not?  (for this we used regular expression is here) 
         var regName = /^[a-zA-Z]+$/;
 
@@ -59,10 +58,10 @@ exports.createAuthors = async function (req, res) {
             return res.status(400).send({ status: false, msg: "PassWord is Required" });
         }
 
-        // var passwordReg = /^(?=.[0-9])(?=.[!@#$%^&])[a-zA-Z0-9!@#$%^&]{7,15}$/;
-        // if (!password.match(passwordReg)) {
-        //     return res.status(400).send({ status: false, msg: "pass is invalid(password should contain min 5 letter password, with at least a symbol, upper and lower case letters and a number Ex. Abc@123" });
-        // } 
+        var passwordReg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,15}$/;
+        if (!passwordReg.test(password)) {
+            return res.status(400).send({ status: false, msg: "pass is invalid(Minimum 6 and maximum 15 characters, at least one uppercase letter, one lowercase letter, one number and one special character Ex. Abc@123,abC%98,@abD34,1999$Sour" });
+        } 
 
         //load the data in database
         let data = await authorModel.create(authorsData)
