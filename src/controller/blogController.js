@@ -117,7 +117,7 @@ exports.getBlogs = async function (req, res) {
             return res.status(404).send({ status: false, msg: "No Document Found as per filter key " })
         }
 
-        //return the data ony if isDeleted :false & isPublished:True
+        //return the data only if isDeleted :false & isPublished:True
         let data = await blogModel.find({ isDeleted: false, isPublished: true })
 
         if (data.length != 0) return res.status(200).send({ status: true, data: data })
@@ -213,6 +213,7 @@ exports.deletedBlog = async function (req, res) {
         let blogId = req.params.blogId;
 
         let blog = await blogModel.findById(blogId);
+        console.log(blog)
 
         //check if isDeleated Status is True
         if (blog.isDeleted) {
