@@ -1,18 +1,19 @@
 const jwt = require("jsonwebtoken");
 const blogModel = require("../models/blogModel");
 const ObjectId = require('mongoose').Types.ObjectId;
-//authentication
 
+//authentication
 exports.authentication = async function (req, res, next) {
     try {
         //check the token in request header
         //validate this token
         let token = req.headers["X-Auth-Token"];
         if (!token) token = req.headers["x-auth-token"];
-        console.log(token)
+
         //If no token is present in the request header ,return error
         if (!token) return res.status(400).send({ status: false, msg: "token must be present" });
-        // let decodedToken;
+        
+        let decodedToken;
         //it verify the token
         try {
             decodedToken = jwt.verify(token, "MSgroup-3");
@@ -38,16 +39,13 @@ exports.authorization = async function (req, res, next) {
         // }
 
         let decodedToken;
-        //it verify the token
+        //verify the token
         try {
             decodedToken = jwt.verify(token, "MSgroup-3");
         } catch (err) {
             return res.status(400).send({ status: false, msg: err.message + " Please enter valid token in header body" })
         }
 
-
-        console.log(req.body.authorId)
-        console.log(decodedToken)
 
         // execute if req.body will contain authorID (When new Blog is Created)
         if (req.body.authorId) {

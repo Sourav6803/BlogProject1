@@ -3,10 +3,11 @@ const router = express.Router();
 const authorController =require("../controller/authorController")
 const blogController =require("../controller/blogController")
 const mw =require("../middleware/middlewareController")
+const authorValidMiddleWare=require("../middleware/authorValidation")
 
 
 // Api to Create Author.
-router.post("/authors",authorController.createAuthors) // testing done
+router.post("/authors",authorValidMiddleWare.authorValidation,authorController.createAuthors) // testing done
 
 //Api to Create Blogs.
 router.post("/blogs",mw.authentication,mw.authorization,blogController.createBlogs) //testing done
