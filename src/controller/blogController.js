@@ -176,25 +176,7 @@ exports.updateBlogs = async function (req, res) {
         // in this blog of code we are checking that subcategory should be valid, u can't use empty space as subcategory
         if (check(subcategory)) return res.status(400).send({ status: false, msg: "subcategory text is invalid" });
 
-        //check if Tag is present in body then push new tag
-        if ("tags" in data) {
-            if (!(Array.isArray(data.tags))) {
-                data.tags = data.tags.split()
-            }
-            data.tags.map((data) => blog.tags.push(data))
-            // blog.tags.push(data.tags)
-            data.tags = blog.tags
-        }
-
-        // check if subcategory is present in body then push new subcategory
-        if ("subcategory" in data) {
-            if (!(Array.isArray(data.subcategory))) {
-                data.subcategory = data.subcategory.split()
-            }
-            data.subcategory.map((data) => blog.subcategory.push(data))
-            data.subcategory = blog.subcategory
-        }
-
+       
         //check if isPublished is TRUE/FALSE ?
         if (isPublished && (!(typeof isPublished === "boolean"))) {
             return res.status(400).send({ status: false, msg: "isPublished Must be TRUE OR FALSE" });
@@ -205,8 +187,13 @@ exports.updateBlogs = async function (req, res) {
             data.publishedAt = new Date()
         }
 
-        let updateDate = await blogModel.findByIdAndUpdate(blogId, data, { new: true })
-        return res.status(200).send({ status: true, data: updateDate });
+        delete data.tags
+        delete data.subcategory
+
+        //let updateData = await blogModel.findByIdAndUpdate(blogId, data, { new: true })
+        let updateData =await blogModel.findByIdAndUpdate(blogId,{$set:data,$push:{tags:tags,subcategory:subcategory}},{new:true})
+
+        return res.status(200).send({ status: true, data: updateData });
     }
     catch (error) {
         return res.status(500).send({ status: false, msg: error.message })
