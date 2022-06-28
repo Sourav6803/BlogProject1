@@ -212,7 +212,7 @@ exports.deletedBlog = async function (req, res) {
             return res.status(404).send({ status: false, msg: "Blog is already Deleted" })
         }
         //update the status of isDeleted to TRUE
-        let updatedData = await blogModel.findOneAndUpdate({ _id: blogId }, { isDeleted: true }, { new: true });
+        let updatedData = await blogModel.findOneAndUpdate({ _id: blogId }, { isDeleted: true,deletedAt: new Date(), }, { new: true });
         return res.status(200).send({ status: true, msg: "successfuly Deleted" });
 
     } catch (error) {

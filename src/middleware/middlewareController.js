@@ -7,8 +7,8 @@ exports.authentication = async function (req, res, next) {
     try {
         //check the token in request header
         //validate this token
-        let token = req.headers["X-Auth-Token"];
-        if (!token) token = req.headers["x-auth-token"];
+        let token = req.headers["x-api-key"];
+        if (!token) token = req.headers["x-api-key"];
 
         //If no token is present in the request header ,return error
         if (!token) return res.status(400).send({ status: false, msg: "token must be present" });
@@ -29,14 +29,9 @@ exports.authentication = async function (req, res, next) {
 
 exports.authorization = async function (req, res, next) {
     try {
-        let token = req.headers["X-Auth-Token"];
-        if (!token) token = req.headers["x-auth-token"];
+        let token = req.headers["x-api-key"];
+        if (!token) token = req.headers["x-api-key"];
 
-        // //it verify the token
-        // let decodedToken = await jwt.verify(token, "MSgroup-3"); -----Dought( error catches in catch block 500)
-        // if(!decodedToken){
-        //     return res.status(400).send({ status: false, msg: "Please enter valid token in header body" })
-        // }
 
         let decodedToken;
         //verify the token
@@ -51,7 +46,7 @@ exports.authorization = async function (req, res, next) {
         if (req.body.authorId) {
             console.log(req.body.authorId)
             if (decodedToken.authorId != (req.body.authorId)) {
-                return res.status(404).send({ status: false, msg: "token auth id and req.body id is not matched" })
+                return res.status(400).send({ status: false, msg: "token auth id and req.body id is not matched" })
             }
             return next()
         }
@@ -69,17 +64,18 @@ exports.authorization = async function (req, res, next) {
             }
             
             if (decodedToken.authorId != authIdData.authorId) {
-                return res.status(404).send({ status: false, msg: "token auth id and req.body id is not matched" })
+                return res.status(400).send({ status: false, msg: "token auth id and req.body id is not matched" })
             }
             return next()
         }
         //executes when we need authorID from query params, (when UPDATE with Query Param filter)
-        if (req.query.authorId) {
+        if (req.query.authorId ) {
             if (decodedToken.authorId != (req.query.authorId)) {
-                return res.status(404).send({ status: false, msg: "token auth id and req.body id is not matched" })
+                return res.status(400).send({ status: false, msg: "token auth id and req.body id is not matched" })
             }
             return next()
         }
+        
         //if no Author Id is Found from client Api ,Side
         else {
             return res.status(400).send({ status: false, mg: " Author id Must be Present ......." })
@@ -87,4 +83,4 @@ exports.authorization = async function (req, res, next) {
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
     }
-};
+}
