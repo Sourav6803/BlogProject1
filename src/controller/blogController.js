@@ -87,7 +87,7 @@ exports.createBlogs = async function (req, res) {
             blogsData.publishedAt = new Date()
         }
         //add the data in DB if all validation passed
-        let data = await blogModel.create(blogsData)
+        let data = await (await blogModel.create(blogsData))
         return res.status(201).send({ status: true, data: data })
     } catch (error) {
         return res.status(500).send({ status: false, msg: error.message })
@@ -106,8 +106,8 @@ exports.getBlogs = async function (req, res) {
         if (Object.keys(req.query).length !== 0) {
 
             //check if id inquery is valid or not
-            if(!ObjectId.isValid(authorId)){
-                return res.status(400).send({status:false,msg:"invalid authorId in query params"})
+            if (!ObjectId.isValid(authorId)) {
+                return res.status(400).send({ status: false, msg: "invalid authorId in query params" })
             }
 
             //add the keyisDeleted &isPublished in req.query
@@ -176,7 +176,7 @@ exports.updateBlogs = async function (req, res) {
         // in this blog of code we are checking that subcategory should be valid, u can't use empty space as subcategory
         if (check(subcategory)) return res.status(400).send({ status: false, msg: "subcategory text is invalid" });
 
-       
+
         //check if isPublished is TRUE/FALSE ?
         if (isPublished && (!(typeof isPublished === "boolean"))) {
             return res.status(400).send({ status: false, msg: "isPublished Must be TRUE OR FALSE" });
@@ -191,7 +191,7 @@ exports.updateBlogs = async function (req, res) {
         delete data.subcategory
 
         //let updateData = await blogModel.findByIdAndUpdate(blogId, data, { new: true })
-        let updateData =await blogModel.findByIdAndUpdate(blogId,{$set:data,$push:{tags:tags,subcategory:subcategory}},{new:true})
+        let updateData = await blogModel.findByIdAndUpdate(blogId, { $set: data, $push: { tags: tags, subcategory: subcategory } }, { new: true })
 
         return res.status(200).send({ status: true, data: updateData });
     }

@@ -17,7 +17,7 @@ async function authorValidation(req, res, next) {
         }
         //check the First & Last Name is present in req.body or not ?
         if (!fname || !lname) {
-            return res.status(400).send({ status: false, msg: "Missing Name" });
+            return res.status(400).send({ status: false, msg: "Missing Name" }); 
         }
         // check if title is present or not?
         if (!title) {
